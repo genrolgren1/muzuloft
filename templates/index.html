@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="account-token" content="{{account_token}}">
+  <meta name="theme-color" content="#05090d">
+  <title>Kingdom Services · GemOps Nexus</title>
+  <link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<div id="toastStack" class="toast-stack"></div>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-logo"><i></i><b>G</b></div>
+      <div><strong>GEMOPS</strong><span>NEXUS 3.5.1</span></div>
+    </div>
+    <div class="system-status">
+      <i id="systemDot"></i>
+      <div><small>SYSTEM</small><b id="systemState">OFFLINE</b></div>
+    </div>
+    <nav>
+      <button class="nav active" data-page="overview"><span>◈</span>Overview</button>
+      <button class="nav" data-page="live"><span>▣</span>Live Ops</button>
+      <button class="nav" data-page="intel"><span>⌁</span>Intelligence</button>
+      <button class="nav" data-page="performance"><span>↗</span>Performance</button>
+      <button class="nav" data-page="companion"><span>⬡</span>Companion <i class="nav-required">REQUIRED</i></button>
+      <button class="nav" data-page="settings"><span>⚙</span>Configuration</button>
+      <button class="nav" data-page="account"><span>◎</span>Accounts</button>
+      <button class="nav" data-page="terminal"><span>›_</span>Terminal</button>
+    </nav>
+    <footer>
+      <div><small>BUILD</small><b>v{{version}}</b></div>
+      <div><small>LDPLAYER</small><b id="device">—</b></div>
+    </footer>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div><small>KINGDOM SERVICES / GEMOPS</small><h1 id="pageTitle">Mission Overview</h1></div>
+      <div class="top-actions">
+        <div id="statePill" class="state-pill stopped"><i></i><b>STOPPED</b></div>
+        <button id="startEmu" class="btn secondary">Launch RoK</button>
+        <button id="stopBot" class="btn danger">Stop</button>
+        <button id="startBot" class="btn primary">Start Mission</button>
+      </div>
+    </header>
+
+
+    <section class="page" data-panel="companion">
+      <div class="runtime-heading"><div><span class="eyebrow">AUTOMATIC FRIDA SERVICE / ISOLATED COMPANION</span><h2>Companion control</h2><p>Starts automatically with Nexus and keeps live Java and native hooks running. Health loss stops the mission; the companion retries automatically. Missions require a fresh manual start after recovery.</p></div><span id="runtimeBadge" class="runtime-badge">STOPPED</span></div>
+      <div class="runtime-layout">
+        <article class="card runtime-main">
+          <div class="card-head"><div><span class="kicker">HEALTH GATE</span><h3>Frida status</h3></div><span class="chip">Frida required</span></div>
+          <div class="signal-cards"><div><span>01 / NATIVE HOOK</span><b id="nativeHealth">WAITING</b><small>Live native heartbeat</small></div><div><span>02 / JAVA HOOK</span><b id="javaHealth">WAITING</b><small>Live Java heartbeat</small></div></div>
+          <p id="runtimeError" class="runtime-message" role="status">The Frida service starts automatically. First-time setup may take several minutes.</p>
+          <div class="runtime-actions"><button class="btn primary" data-companion="start">Resume service</button><button class="btn secondary" data-companion="restart">Restart service</button><button class="btn danger" data-companion="stop">Pause service & mission</button></div>
+          <div class="runtime-route"><span>Companion app</span><i>→</i><span>Native + Java events</span><i>→</i><span>Health PASS</span><i>→</i><span>GemOps enabled</span></div>
+        </article>
+        <article class="card runtime-details"><div class="card-head"><h3>Runtime identity</h3></div><dl><dt>Allowed app</dt><dd>com.ks.fridatest</dd><dt>Companion LDPlayer</dt><dd id="labIndex">—</dd><dt>Main RoK LDPlayer</dt><dd id="mainIndex">—</dd><dt>Attached PID</dt><dd id="labPid">—</dd><dt>Frida endpoint</dt><dd id="fridaTransport">—</dd><dt>Frida version</dt><dd id="fridaVersion">—</dd><dt>Heartbeat age</dt><dd id="heartbeatAge">—</dd><dt>Hook events</dt><dd id="hookEvents">0</dd><dt>Frida map scans</dt><dd id="fridaMapScans">0</dd><dt>Last map scan</dt><dd id="fridaMapMs">—</dd></dl></article>
+      </div>
+      <div class="runtime-layout"><article class="card"><div class="card-head"><div><span class="kicker">RECOVERY</span><h3>Mission watchdog</h3></div></div><div class="runtime-details"><dl><dt>Current state</dt><dd id="machineState">idle</dd><dt>Time in state</dt><dd id="stateAge">—</dd><dt>Deadline</dt><dd id="stateDeadline">—</dd><dt>Confirmed sends</dt><dd id="confirmedSends">0</dd><dt>Unconfirmed attempts</dt><dd id="unconfirmedSends">0</dd><dt>Adaptive finder retries</dt><dd id="adaptiveRetries">0</dd></dl></div><div id="serviceEvents" class="runtime-events">No service events yet.</div></article><article class="card"><div class="card-head"><div><span class="kicker">SERVICE LOG</span><h3>Companion log</h3></div></div><pre id="companionLog" class="runtime-log">Waiting for companion…</pre></article></div>
+      <p class="runtime-footnote">RoK stays on ADB. Frida analyzes screenshot pixels in the companion; local vision validates candidate gems, with optional AI fallback. The companion uses a separate named LDPlayer. Restarting it stops the current mission; resume explicitly after PASS.</p>
+    </section>
+
+    <!-- OVERVIEW -->
+    <section class="page active" data-panel="overview">
+      <div class="hero">
+        <div>
+          <span class="eyebrow">GEM GATHERING</span>
+          <h2>Gathering overview</h2>
+          <p>Monitor gathering, marches, and the emulator connection.</p>
+          <div class="hero-tags">
+            <span>✓ Zoom-adaptive gems</span><span>✓ Local vision first</span><span>✓ 5 / 6 / 7 marches</span><span>✓ 4-minute fallback</span>
+          </div>
+        </div>
+        <div class="health">
+          <div id="healthRing" class="health-ring"><div><b id="healthScore">100</b><small>HEALTH</small></div></div>
+          <span id="healthLabel">READY</span>
+        </div>
+      </div>
+
+      <div class="readiness-banner" role="status">
+        <div><span class="pulse-dot" id="companionDot"></span><b id="companionSummary">Companion required</b><span id="companionHint">Start the companion to unlock missions.</span></div>
+        <button class="btn secondary" onclick="showPage('companion')">Open runtime controls →</button>
+      </div>
+      <div class="metrics six">
+        <article><span class="ico green">◆</span><div><small>GEM MARCHES</small><b id="marches">0</b><em id="marchRate">0.0 dispatch/hr</em></div></article>
+        <article><span class="ico cyan">◇</span><div><small>FREE GEMS FOUND</small><b id="freeGems">0</b><em id="lastGemSmall">last find —</em></div></article>
+        <article><span class="ico violet">⌁</span><div><small>SEARCH COVERAGE</small><b id="coverage">0%</b><em id="searchModeSmall">SMART search</em></div></article>
+        <article><span class="ico amber">⚡</span><div><small>AVG DISPATCH</small><b id="avgDispatch">—</b><em>Gather → March</em></div></article>
+        <article><span class="ico red">×</span><div><small>FALSE POSITIVES BLOCKED</small><b id="falsePrevented">0</b><em id="preventionRateTop">0% prevention</em></div></article>
+        <article><span class="ico blue">◎</span><div><small>CANDIDATE SUCCESS</small><b id="candidateRate">0%</b><em id="detectorSmall">STRICT detector</em></div></article>
+      </div>
+
+      <div class="overview-grid">
+        <article class="card live-card">
+          <div class="card-head"><div><span class="kicker">LIVE ANDROID</span><h3>LDPlayer Feed</h3></div><div><span id="liveTask" class="chip">idle</span><span class="chip dim">10s refresh</span></div></div>
+          <div class="screen-shell">
+            <div class="screen-bar"><span><i></i> LIVE</span><span id="screenClock">—</span></div>
+            <div class="screen">
+              <img id="liveScreen" alt="Live LDPlayer">
+              <div id="screenWait" class="screen-wait"><div class="orb"></div><b>Waiting for LDPlayer</b><span>Open the emulator to begin live view.</span></div>
+            </div>
+            <div class="screen-foot"><button id="refreshScreen">Refresh</button><button id="openScreenModal">Expand</button><span id="screenAge">not loaded</span></div>
+          </div>
+          <div class="quick-grid">
+            <button id="restartEmu"><span>↻</span><b>Restart</b><small>LDPlayer</small></button>
+            <button id="gpuRepair"><span>✓</span><b>Connection</b><small>ADB check</small></button>
+            <button id="selfTest"><span>◇</span><b>Self-Test</b><small>Vision + search</small></button>
+            <button id="quickConfig"><span>⚙</span><b>Tune</b><small>Configuration</small></button>
+          </div>
+        </article>
+
+        <article class="card mission">
+          <div class="card-head"><div><span class="kicker">MISSION STATE</span><h3>Current step</h3></div><span id="botState" class="chip accent">stopped</span></div>
+          <div class="pipeline">
+            <div id="pipe-search"><i>01</i><span><b>Search</b><small>Frontier exploration</small></span></div>
+            <div id="pipe-detect"><i>02</i><span><b>Validate</b><small>Free gem classifier</small></span></div>
+            <div id="pipe-gather"><i>03</i><span><b>Gather</b><small>Resource panel</small></span></div>
+            <div id="pipe-troop"><i>04</i><span><b>New Troop</b><small>Free march slot</small></span></div>
+            <div id="pipe-march"><i>05</i><span><b>March</b><small>Turbo dispatch</small></span></div>
+          </div>
+          <div class="mission-stats">
+            <div><small>CURRENT TASK</small><b id="task">idle</b></div>
+            <div><small>RUNTIME</small><b id="runtime">0s</b></div>
+            <div><small>ACTIONS</small><b id="actions">0</b></div>
+            <div><small>AI CALLS</small><b id="aiCalls">0</b></div>
+          </div>
+          <div class="note"><small>LIVE NOTE</small><p id="note">GemOps standing by.</p></div>
+          <div class="throughput">
+            <div><span><small>SESSION DISPATCH RATE</small><b id="throughputNow">0.0/hr</b></span><em id="throughputTrend">warming up</em></div>
+            <svg viewBox="0 0 500 90" preserveAspectRatio="none"><path id="sparkArea"></path><polyline id="sparkLine"></polyline></svg>
+          </div>
+        </article>
+      </div>
+
+      <div class="lower-grid">
+        <article class="card compact">
+          <div class="card-head"><div><span class="kicker">SEARCH QUALITY</span><h3>Efficiency</h3></div></div>
+          <div class="rows">
+            <div><span>Average gem find</span><b id="avgFind">—</b></div>
+            <div><span>Occupied skipped</span><b id="occupiedSkipped">0</b></div>
+            <div><span>Learned gem zoom</span><b id="learnedScale">—</b></div>
+            <div><span>Built-in finder</span><b id="builtinFinderState">ON</b></div>
+            <div><span>Gem choices detected</span><b id="selectorCount">0</b></div>
+            <div><span>Unique views</span><b id="uniqueViewsOverview">0</b></div>
+            <div><span>Stuck recoveries</span><b id="stuckRecoveriesOverview">0</b></div>
+            <div><span>Turbo successes</span><b id="turboSuccessOverview">0</b></div>
+          </div>
+        </article>
+        <article class="card compact">
+          <div class="card-head"><div><span class="kicker">SYSTEM</span><h3>Diagnostics</h3></div><button id="refreshDiagnostics" class="tiny">Refresh</button></div>
+          <div class="rows">
+            <div><span>Templates</span><b id="diagTemplates">—</b></div>
+            <div><span>AI fallback</span><b id="diagAI">—</b></div>
+            <div><span>Search mode</span><b id="diagSearch">—</b></div>
+            <div><span>Detector</span><b id="diagDetector">—</b></div>
+            <div><span>Foreground app</span><b id="diagForeground">—</b></div>
+            <div><span>Failure code</span><b id="failureCodeOverview">none</b></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- LIVE OPS -->
+    <section class="page" data-panel="live">
+      <div class="page-head"><div><span class="eyebrow">LIVE OPERATIONS</span><h2>Emulator</h2><p>Watch the selected LDPlayer and control the active mission.</p></div><div><button id="liveRefresh" class="btn secondary">Refresh Feed</button><button id="liveRestart" class="btn secondary">Restart LDPlayer</button></div></div>
+      <div class="live-layout">
+        <article class="card giant">
+          <div class="card-head"><div><span class="kicker">LIVE VIEW</span><h3>Rise of Kingdoms</h3></div><span id="liveOpsDevice" class="chip">—</span></div>
+          <div id="liveClone" class="clone-screen"></div>
+          <div class="live-stats">
+            <div><small>TASK</small><b id="liveOpsTask">idle</b></div><div><small>STATE</small><b id="liveOpsState">stopped</b></div><div><small>RUNTIME</small><b id="liveOpsRuntime">0s</b></div><div><small>ACTIONS</small><b id="liveOpsActions">0</b></div>
+          </div>
+        </article>
+        <aside class="live-side">
+          <article class="card compact"><div class="card-head"><div><span class="kicker">MISSION</span><h3>Controls</h3></div></div><div class="stack"><button id="liveStartBot" class="btn primary">Start Gem Mission</button><button id="liveStopBot" class="btn danger">Stop Mission</button><button id="liveStartEmu" class="btn secondary">Open RoK</button><button id="liveCheck" class="btn secondary">Verify Connection</button></div></article>
+          <article class="card compact"><div class="card-head"><div><span class="kicker">TURBO ENGINE</span><h3>Dispatch</h3></div></div><div class="dispatch-big"><b id="liveAvgDispatch">—</b><span>average Gather → March</span></div><div class="rows tight"><div><span>Turbo success</span><b id="liveTurboSuccess">0</b></div><div><span>Fallbacks</span><b id="liveTurboFallback">0</b></div><div><span>Marches</span><b id="liveMarches">0</b></div></div></article>
+        </aside>
+      </div>
+    </section>
+
+    <!-- INTELLIGENCE -->
+    <section class="page" data-panel="intel">
+      <div class="page-head"><div><span class="eyebrow">SEARCH + DETECTION</span><h2>Gem detection</h2><p>Every gem decision, every filter, every search movement.</p></div><div><span id="searchModeLive" class="intel-chip">SMART</span><span id="detectorModeLive" class="intel-chip safety">STRICT</span></div></div>
+      <div class="intel-layout">
+        <article class="card radar-card">
+          <div class="card-head"><div><span class="kicker">SEARCH RADAR</span><h3>Coverage Frontier</h3></div><b id="radarCoverage">0%</b></div>
+          <div class="radar"><i class="ring a"></i><i class="ring b"></i><i class="ring c"></i><i class="cross h"></i><i class="cross v"></i><i id="radarDot" class="dot"></i><span>ORIGIN</span></div>
+          <div class="radar-meta"><span>X <b id="searchX">0.00</b></span><span>Y <b id="searchY">0.00</b></span><span>R <b id="radiusUnits">1.00</b></span></div>
+          <div class="coverage-line"><span>Map coverage</span><b id="coverageBig">0%</b><div><i id="coverageBar"></i></div></div>
+        </article>
+        <article class="card detector">
+          <div class="card-head"><div><span class="kicker">LIVE CANDIDATE</span><h3>Multi-Signal Detector</h3></div><span id="candidateVerdict" class="verdict">WAITING</span></div>
+          <div class="confidence"><div><span>Combined confidence</span><b id="candidateConfidence">0%</b></div><div><i id="candidateConfidenceBar"></i></div></div>
+          <div class="signals">
+            <div><span>TEMPLATE</span><b id="sigTemplate">0.00</b><i id="barTemplate"></i></div>
+            <div><span>COLOR</span><b id="sigHist">0.00</b><i id="barHist"></i></div>
+            <div><span>RED CRYSTAL</span><b id="sigRed">0.00</b><i id="barRed"></i></div>
+            <div><span>SHAPE</span><b id="sigEdge">0.00</b><i id="barEdge"></i></div>
+            <div class="danger"><span>AXE BADGE</span><b id="sigAxe">0.00</b><i id="barAxe"></i></div>
+            <div class="danger"><span>GREEN ACTIVE</span><b id="sigGreen">0.0000</b><i id="barGreen"></i></div>
+          </div>
+          <div class="reason"><small>DECISION TRACE</small><p id="candidateReason">No candidate analyzed yet.</p></div>
+        </article>
+      </div>
+      <div class="intel-stats">
+        <article><small>SEARCH SWIPES</small><b id="searchSwipes">0</b><span>coverage-aware</span></article>
+        <article><small>CANDIDATES SEEN</small><b id="candidatesSeen">0</b><span id="candidateChecksLabel">0 checked</span></article>
+        <article><small>FALSE POSITIVES</small><b id="fpBlockedBig">0</b><span id="preventionRate">0% prevention</span></article>
+        <article><small>TEMPORAL REJECTS</small><b id="temporalRejects">0</b><span>unstable blocked</span></article>
+        <article><small>AI VERIFY</small><b id="aiCandidateVerify">0</b><span id="aiCandidateRejected">0 rejected</span></article>
+        <article><small>WATCHDOG</small><b id="watchdog">READY</b><span id="failureCode">no failures</span></article>
+      </div>
+      <article class="card feed-card"><div class="card-head"><div><span class="kicker">DETECTION EVENTS</span><h3>Candidate Decisions</h3></div><span class="chip dim">newest first</span></div><div id="candidateFeed" class="feed"><div class="feed-empty">Waiting for candidate telemetry…</div></div></article>
+    </section>
+
+    <!-- PERFORMANCE -->
+    <section class="page" data-panel="performance">
+      <div class="page-head"><div><span class="eyebrow">PERFORMANCE</span><h2>Performance</h2><p>Search times and march activity.</p></div></div>
+      <div class="perf-kpis">
+        <article class="focus"><small>EST. DISPATCH RATE</small><b id="perfRate">0.0</b><span>dispatches per hour</span></article>
+        <article><small>AVERAGE FIND</small><b id="perfFind">—</b><span>free gem acquisition</span></article>
+        <article><small>AVERAGE DISPATCH</small><b id="perfDispatch">—</b><span>Gather → March</span></article>
+        <article><small>CANDIDATE SUCCESS</small><b id="perfCandidateRate">0%</b><span>validated selections</span></article>
+      </div>
+      <div class="perf-layout">
+        <article class="card chart-card"><div class="card-head"><div><span class="kicker">SESSION HISTORY</span><h3>Dispatch Pace</h3></div><span id="perfTrend" class="chip">warming up</span></div><svg class="big-chart" viewBox="0 0 800 240" preserveAspectRatio="none"><line x1="0" y1="60" x2="800" y2="60"></line><line x1="0" y1="120" x2="800" y2="120"></line><line x1="0" y1="180" x2="800" y2="180"></line><path id="bigChartArea"></path><polyline id="bigChartLine"></polyline></svg></article>
+        <article class="card compact"><div class="card-head"><div><span class="kicker">TIMING</span><h3>Work Distribution</h3></div></div><div class="rows">
+          <div><span>Template hits</span><b id="templateHits">0</b></div><div><span>Template misses</span><b id="templateMisses">0</b></div><div><span>CV rejects</span><b id="cvRejects">0</b></div><div><span>Post-click rejects</span><b id="postClickRejects">0</b></div><div><span>Duplicate views</span><b id="duplicateViews">0</b></div><div><span>Stuck recoveries</span><b id="stuckRecoveries">0</b></div><div><span>Occupied memory</span><b id="occupiedMemory">0</b></div><div><span>Unique views</span><b id="uniqueViews">0</b></div>
+        </div></article>
+      </div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section class="page" data-panel="settings">
+      <div class="page-head"><div><span class="eyebrow">CONFIGURATION</span><h2>Settings</h2><p>Choose a preset or adjust the settings.</p></div><button id="saveConfig" class="btn primary">Save Configuration</button></div>
+      <div class="presets">
+        <button data-preset="accuracy" class="active"><span>SHIELD</span><b>Maximum Accuracy</b><small>Strict + two-frame validation</small></button>
+        <button data-preset="throughput"><span>BOOST</span><b>High Throughput</b><small>Balanced + fast exploration</small></button>
+        <button data-preset="wide"><span>RADAR</span><b>Wide Search</b><small>Explore farther sectors</small></button>
+        <button data-preset="eco"><span>ECO</span><b>Low Resource</b><small>Reduced scan pressure</small></button>
+      </div>
+      <div class="settings-grid">
+        <article class="card setting"><div class="card-head"><div><span class="kicker">MARCH CONTROL</span><h3>Dispatch</h3></div></div><div class="form">
+          <label>Safety max marches<input id="marchesCfg" type="number" min="1" max="7" value="{{cfg.marches_to_send}}"></label>
+          <label class="switch"><span><b>Auto-fill marches</b><small>Fill all free 5 / 6 / 7 slots</small></span><input id="autoFillMarches" type="checkbox" {% if cfg.auto_fill_all_marches %}checked{% endif %}></label>
+          <label class="switch turbo"><span><b>Turbo dispatch</b><small>Local Gather → New Troop → March</small></span><input id="turboDispatch" type="checkbox" {% if cfg.turbo_dispatch %}checked{% endif %}></label>
+          <label class="switch turbo"><span><b>Reliable press-hold</b><small>Short hold on New Troop and MARCH so LDPlayer always registers it</small></span><input id="reliablePressHold" type="checkbox" {% if cfg.reliable_press_hold %}checked{% endif %}></label>
+          <label>Press hold time (ms)<input id="pressHoldMs" type="number" min="80" max="600" value="{{cfg.press_hold_ms}}"><small>180ms recommended</small></label>
+          <label>Loadout color<select id="loadout">{% for x in ['Blue','Red','Green','Yellow','Purple'] %}<option {% if cfg.loadout_color==x %}selected{% endif %}>{{x}}</option>{% endfor %}</select></label>
+        </div></article>
+        <article class="card setting"><div class="card-head"><div><span class="kicker">MAP SEARCH</span><h3>Exploration</h3></div></div><div class="form">
+          <label>Search radius<input id="radius" type="number" min="1" max="1000" value="{{cfg.gather_radius}}"><small>100 ≈ one screen from origin</small></label>
+          <label>Search intelligence<select id="searchMode">{% for x in ['smart','fast','wide','eco'] %}<option value="{{x}}" {% if cfg.search_mode==x %}selected{% endif %}>{{x|upper}}</option>{% endfor %}</select></label>
+          <label class="switch turbo"><span><b>Built-in Gem Finder</b><small>Hold Tree/Search → detect the whole row of red gem choices</small></span><input id="builtinGemFinder" type="checkbox" {% if cfg.builtin_gem_finder %}checked{% endif %}></label>
+          <label>Gem choice strategy<select id="gemSelectorStrategy"><option value="highest_first" {% if cfg.gem_selector_strategy=='highest_first' %}selected{% endif %}>HIGHEST / RIGHTMOST FIRST</option><option value="cycle" {% if cfg.gem_selector_strategy=='cycle' %}selected{% endif %}>CYCLE HIGH → LOW</option><option value="lowest_first" {% if cfg.gem_selector_strategy=='lowest_first' %}selected{% endif %}>LOWEST / LEFTMOST FIRST</option></select></label>
+          <label>Castle hold (ms)<input id="castleHoldMs" type="number" min="500" max="1800" value="{{cfg.castle_hold_ms}}"><small>actual Leave City long-hold</small></label>
+          <label>Tree/Search hold (ms)<input id="treeHoldMs" type="number" min="450" max="1600" value="{{cfg.tree_hold_ms}}"><small>opens RoK's built-in resource finder</small></label>
+          <label>Occupied memory<input id="occupiedCooldown" type="number" min="30" max="900" value="{{cfg.occupied_cooldown_seconds}}"><small>seconds before retrying a rejected node</small></label>
+          <label>Retry delay<input id="retry" type="number" min="20" max="900" value="{{cfg.retry_seconds}}"></label>
+        </div></article>
+        <article class="card setting"><div class="card-head"><div><span class="kicker">GEM DETECTION</span><h3>Detector</h3></div></div><div class="form">
+          <label>Detector accuracy<select id="detectorMode">{% for x in ['strict','balanced','fast'] %}<option value="{{x}}" {% if cfg.detector_mode==x %}selected{% endif %}>{{x|upper}}</option>{% endfor %}</select></label>
+          <label class="switch"><span><b>Two-frame confirmation</b><small>Reject unstable candidates</small></span><input id="temporalConfirm" type="checkbox" {% if cfg.temporal_confirmation %}checked{% endif %}></label>
+          <label class="switch"><span><b>AI borderline verification</b><small>Crop-only classification</small></span><input id="aiVerifyBorderline" type="checkbox" {% if cfg.ai_verify_borderline %}checked{% endif %}></label>
+        </div></article>
+        <article class="card setting"><div class="card-head"><div><span class="kicker">SYSTEM</span><h3>Runtime</h3></div></div><div class="form">
+          <label>Emulator slot<input id="slot" type="number" min="0" max="20" value="{{cfg.slot}}"></label>
+          <label>Run time (hours)<input id="runtimeCfg" type="number" min="1" max="24" value="{{cfg.daily_runtime_limit}}"></label>
+          <label class="switch"><span><b>AI fallback</b><small>Handle unusual screens</small></span><input id="aiFallback" type="checkbox" {% if cfg.ai_fallback %}checked{% endif %}></label>
+          <label class="switch"><span><b>Failure captures</b><small>Keep capped debug screenshots</small></span><input id="debugCapture" type="checkbox" {% if cfg.debug_capture_failures %}checked{% endif %}></label>
+          <label class="switch"><span><b>Recall on stop</b><small>Bring gem marches home</small></span><input id="bringHome" type="checkbox" {% if cfg.bring_marches_home %}checked{% endif %}></label>
+        </div></article>
+      </div>
+    </section>
+
+    <!-- ACCOUNT -->
+    <section class="page" data-panel="account">
+      <div class="page-head"><div><span class="eyebrow">ACCOUNT CENTER</span><h2>Login & Switching</h2><p>Control the selected LDPlayer account from the local dashboard.</p></div><span id="accountState" class="chip">idle</span></div>
+      <div class="account-grid">
+        <article class="card account-card"><div class="card-head"><div><span class="kicker">QUICK ACTIONS</span><h3>Saved Accounts</h3></div></div><div class="stack">
+          <button id="accountDropdown" class="btn secondary">Open Account Dropdown</button><button id="loginSelected" class="btn primary">Login Selected Account</button><button id="loginAnother" class="btn secondary">Log In To Another Account</button>
+          <label>Saved account label / email<div class="input-row"><input id="savedAccount" type="text" maxlength="128" autocomplete="off" spellcheck="false" placeholder="example@yahoo.com"><button id="chooseSaved" class="btn secondary">Choose</button></div></label>
+          <div class="account-meta"><div><small>METHOD</small><b id="accountMethod">ready</b></div><div><small>SCREEN</small><b id="accountScreen">—</b></div></div>
+          <p id="accountMessage">Account controls ready.</p>
+        </div></article>
+        <article class="card account-card"><div class="card-head"><div><span class="kicker">EMAIL CODE</span><h3>Verification Login</h3></div></div><div class="stack">
+          <label>Email Address<input id="codeEmail" type="text" maxlength="256" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="example@yahoo.com"></label>
+          <label>Email Code<input id="emailCode" type="text" maxlength="32" inputmode="numeric" autocomplete="one-time-code" spellcheck="false" disabled placeholder="Enabled after email is entered"></label>
+          <div class="row-actions"><button id="prepareEmailCode" class="btn secondary">Prepare Code Login</button><button id="submitEmailCode" class="btn primary" disabled>Submit Code</button></div>
+          <small class="help">You provide the verification code when it arrives.</small>
+        </div></article>
+        <article class="card account-card"><div class="card-head"><div><span class="kicker">PASSWORD LOGIN</span><h3>Credentials</h3></div></div><div class="stack">
+          <label>Email / Username<input id="loginUsername" type="text" maxlength="256" autocomplete="off"></label><label>Password<input id="loginPassword" type="password" maxlength="512" autocomplete="new-password"></label><button id="loginCredentials" class="btn primary">Login To This Account</button>
+        </div></article>
+        <article class="card account-card warning"><div class="card-head"><div><span class="kicker">SECURITY</span><h3>Change Password</h3></div></div><div class="stack">
+          <label>Current password<input id="currentPassword" type="password" maxlength="512" autocomplete="new-password"></label><label>New password<input id="newPassword" type="password" maxlength="512" autocomplete="new-password"></label><label>Confirm new password<input id="confirmPassword" type="password" maxlength="512" autocomplete="new-password"></label><button id="changePassword" class="btn danger">Change Current Password</button>
+        </div></article>
+      </div>
+    </section>
+
+    <!-- TERMINAL -->
+    <section class="page" data-panel="terminal">
+      <div class="page-head"><div><span class="eyebrow">TERMINAL</span><h2>GemOps Event Console</h2><p>Live bot output with filtering and troubleshooting tools.</p></div><div><button id="copyLog" class="btn secondary">Copy Log</button><button id="pauseLog" class="btn secondary">Pause Scroll</button></div></div>
+      <article class="card terminal-card"><div class="terminal-bar"><div><i></i><i></i><i></i></div><input id="logFilter" type="search" placeholder="Filter visible log…"><span id="logLines">0 lines</span></div><pre id="log">GemOps standing by.</pre></article>
+    </section>
+  </main>
+</div>
+
+<div id="screenModal" class="modal"><div class="modal-backdrop" data-close></div><div class="modal-box"><div><span>Expanded LDPlayer View</span><button data-close>×</button></div><div id="modalScreen"></div></div></div>
+<script src="/static/app.js"></script>
+</body>
+</html>
